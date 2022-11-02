@@ -57,6 +57,8 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'dj_rest_auth',
     'dj_rest_auth.registration',
+
+    'accounts',
 ]
 
 REST_FRAMEWORK = {
@@ -75,6 +77,8 @@ JWT_AUTH = {
     'JWT_EXPIRATION_DELTA' : datetime.timedelta(minutes=30),
     'JWT_REFRESH_EXPIRATION_DELTA' : datetime.timedelta(days=28)
 }
+
+AUTH_USER_MODEL = 'accounts.User'
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -112,8 +116,12 @@ WSGI_APPLICATION = "MindWay.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        'ENGINE' : 'django.db.backends.mysql',
+        'NAME' : 'mindway',
+        'USER' : get_secret("DATABASE")['USER'],
+        'PASSWORD' : get_secret("DATABASE")['PASSWORD'],
+        'HOST' : 'localhost',
+        'PORT' : '3306',
     }
 }
 
