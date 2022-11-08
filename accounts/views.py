@@ -3,6 +3,8 @@ from rest_framework import generics, status
 from django.http import JsonResponse
 
 from .serializers import SignupSerializer
+from .models import *
+from .email import send
 
 import logging
 import logging.config
