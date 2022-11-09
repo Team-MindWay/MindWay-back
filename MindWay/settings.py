@@ -63,10 +63,10 @@ INSTALLED_APPS = [
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES' : (
-        'rest_framework.permissions.AllowAny'
+        'rest_framework.permissions.AllowAny',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES' : (
-        'rest_framework_jwt.authentication.JSONWebTokenAuthenticatin',
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
     )
 }
 
@@ -95,7 +95,7 @@ ROOT_URLCONF = "MindWay.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
