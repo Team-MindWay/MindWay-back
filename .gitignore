@@ -12,3 +12,5 @@ db.sqlite3-journal
 media
 
 secrets.json
+
+templates
