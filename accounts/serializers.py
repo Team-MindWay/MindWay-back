@@ -86,3 +86,19 @@ class UserSerializer(serializers.ModelSerializer):
             'is_active',
             'is_superuser',
         )
+
+class RefreshSerializer(serializers.Serializer):
+    id = serializers.CharField()
+
+    def validate(self, data):
+        id = data.get('id')
+        user = User.objects.get(id=id)
+
+        if user is None:
+            return {'id' : None}
+
+        payload = JWT_PAYLOAD_HANDLER(user)
+        access_token = generate_token(payload, 'access')
+        refresh_token = generate_token(payload, 'refresh')
+
+        return {'access_token' : access_token, 'refresh_token' : refresh_token}

@@ -151,3 +151,37 @@ class UserInfo(generics.GenericAPIView):
 
             return JsonResponse(UserSerializer(user).data)
         raise AuthenticationFailed('unauthenticated')
+
+class UserRefresh(generics.GenericAPIView):
+    serializer_class = RefreshSerializer
+
+    def patch(self, request):
+        refresh = request.data['refresh_token']
+        user = decode_refresh_token(refresh)
+        pre_token = Refresh.objects.get(user=user['user_id'])
+
+        if not pre_token.refresh == refresh:
+            return JsonResponse({'message' : 'Fail'}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = RefreshSerializer(data={'id' : user['user_id']})
+
+        if not serializer.is_valid(raise_exception=True):
+            return JsonResponse({'message' : 'Fail'}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer.is_valid(raise_exception=True)
+        token = serializer.validated_data
+
+        update_token = TokenSerializer(
+            pre_token,
+            data = {
+                'user' : user['user_id'],
+                'refresh' : token['refresh_token']
+            }
+        )
+
+        if not update_token.is_valid(raise_exception=True):
+            return JsonResponse({'message' : 'Fail'}, status=status.HTTP_400_BAD_REQUEST)
+
+        update_token.save()
+
+        return JsonResponse({'access_token' : token['access_token'], 'refresh_token' : token['refresh_token']})
