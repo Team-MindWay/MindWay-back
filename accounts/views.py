@@ -1,6 +1,7 @@
 import jwt
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny
+from rest_framework.exceptions import AuthenticationFailed
 from django.http import JsonResponse
 from django.core.exceptions import ValidationError
 from django.utils.http import urlsafe_base64_decode
@@ -12,6 +13,7 @@ from django.core.cache import cache
 from .serializers import *
 from .models import *
 from .email import send
+from .token import *
 
 import logging
 import logging.config
@@ -138,3 +140,14 @@ class Login(generics.GenericAPIView):
         token.save()
 
         return JsonResponse({'access_token' : user['access_token'], 'refresh_token' : user['refresh_token']})
+
+class UserInfo(generics.GenericAPIView):
+    def get(self, request):
+        auth = request.META.get('HTTP_AUTHORIZATION').split()
+
+        if auth and len(auth) == 2:
+            id = decode_access_token(auth[1])
+            user = User.objects.get(id=id)
+
+            return JsonResponse(UserSerializer(user).data)
+        raise AuthenticationFailed('unauthenticated')

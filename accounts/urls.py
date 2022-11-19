@@ -7,4 +7,5 @@ urlpatterns = [
     path('request/validation', RequestValidation.as_view()),
     path('password/change', ChangePassword.as_view()),
     path('login', Login.as_view()),
+    path('info', UserInfo.as_view()),
 ]
