@@ -1,8 +1,7 @@
 import datetime, jwt
+from django.conf import settings
 from rest_framework_jwt.settings import api_settings
 from rest_framework import exceptions
-
-from MindWay.settings import SECRET_KEY
 
 JWT_ENCODE_HANDLER = api_settings.JWT_ENCODE_HANDLER
 
@@ -23,7 +22,7 @@ def generate_token(payload, type):
 
 def decode_access_token(token):
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms='HS256')
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms='HS256')
 
         return payload['user_id']
     except:
@@ -31,7 +30,7 @@ def decode_access_token(token):
 
 def decode_refresh_token(token):
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms='HS256')
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms='HS256')
 
         return {'user_id' : payload['user_id'], 'username' : payload['username']}
     except:
