@@ -1,5 +1,6 @@
 import jwt
 from rest_framework import generics, status
+from rest_framework.permissions import AllowAny
 from django.http import JsonResponse
 from django.core.exceptions import ValidationError
 from django.utils.http import urlsafe_base64_decode
@@ -105,3 +106,35 @@ class ChangePassword(generics.GenericAPIView):
         del request.session['email']
 
         return JsonResponse({'message' : 'Success'})
+
+class Login(generics.GenericAPIView):
+    serializer_class = LoginSerializer
+
+    def post(self, request):
+        serializer = LoginSerializer(data=request.data)
+
+        if not serializer.is_valid(raise_exception=True):
+            return JsonResponse({'message' : 'Fail'}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data
+
+        if user['id'] is None:
+            return JsonResponse({'message' : 'Fail'}, status=status.HTTP_401_UNAUTHORIZED)
+
+        if user['is_active'] == False:
+            return JsonResponse({'message' : 'Fail'}, status=status.HTTP_403_FORBIDDEN)
+
+        token = TokenSerializer(
+            data = {
+                'user' : user['id'],
+                'refresh' : user['refresh_token'],
+            }
+        )
+
+        if not token.is_valid(raise_exception=True):
+            return JsonResponse({'message' : 'Fail'}, status=status.HTTP_400_BAD_REQUEST)
+
+        token.save()
+
+        return JsonResponse({'access_token' : user['access_token'], 'refresh_token' : user['refresh_token']})
