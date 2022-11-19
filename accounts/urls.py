@@ -6,4 +6,5 @@ urlpatterns = [
     path('validation/<str:uid>/<str:token>', Validation.as_view()),
     path('request/validation', RequestValidation.as_view()),
     path('password/change', ChangePassword.as_view()),
+    path('login', Login.as_view()),
 ]
