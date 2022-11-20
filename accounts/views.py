@@ -127,18 +127,34 @@ class Login(generics.GenericAPIView):
         if user['is_active'] == False:
             return JsonResponse({'message' : 'Fail'}, status=status.HTTP_403_FORBIDDEN)
 
-        token = TokenSerializer(
-            data = {
-                'user' : user['id'],
-                'refresh' : user['refresh_token'],
-            }
-        )
+        try :
+            token = Refresh.objects.get(id=user['id'])
 
-        if not token.is_valid(raise_exception=True):
-            return JsonResponse({'message' : 'Fail'}, status=status.HTTP_400_BAD_REQUEST)
+            if token:
+                refresh = TokenSerializer(
+                    token,
+                    data = {
+                        'user' : user['id'],
+                        'refresh' : user['refresh_token'],
+                    }
+                )
+    
+                if not refresh.is_valid(raise_exception=True):
+                    return JsonResponse({'message' : 'Fail'}, status=status.HTTP_400_BAD_REQUEST)
+    
+                refresh.save()
+        except:
+            refresh = TokenSerializer(
+                data = {
+                    'user' : user['id'],
+                    'refresh' : user['refresh_token'],
+                }
+            )
 
-        token.save()
+            if not refresh.is_valid(raise_exception=True):
+                return JsonResponse({'message' : 'Fail'}, status=status.HTTP_400_BAD_REQUEST)
 
+            refresh.save()
         return JsonResponse({'access_token' : user['access_token'], 'refresh_token' : user['refresh_token']})
 
 class UserInfo(generics.GenericAPIView):
