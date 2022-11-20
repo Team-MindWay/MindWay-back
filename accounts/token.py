@@ -6,9 +6,9 @@ from rest_framework import exceptions
 JWT_ENCODE_HANDLER = api_settings.JWT_ENCODE_HANDLER
 
 def generate_token(payload, type):
-    if type is "access":
+    if type == "access":
         exp = datetime.datetime.utcnow() + datetime.timedelta(seconds=30)
-    elif type is "refresh":
+    elif type == "refresh":
         exp = datetime.datetime.utcnow() + datetime.timedelta(weeks=2)
     else :
         raise Exception('Invalid Tokentype')
