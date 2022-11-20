@@ -185,3 +185,16 @@ class UserRefresh(generics.GenericAPIView):
         update_token.save()
 
         return JsonResponse({'access_token' : token['access_token'], 'refresh_token' : token['refresh_token']})
+
+class Logout(generics.GenericAPIView):
+    def put(self, request):
+        auth = request.META.get('HTTP_AUTHORIZATION').split()
+
+        if auth and len(auth) == 2:
+            id = decode_access_token(auth[1])
+            user = User.objects.get(id=id)
+            token = Refresh.objects.get(user=user.id)
+
+            token.delete()
+        
+        return JsonResponse({'message' : 'Success'})
