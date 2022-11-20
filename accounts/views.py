@@ -85,15 +85,15 @@ class RequestValidation(generics.GenericAPIView):
         return JsonResponse({'message' : 'Success'})
 
 class ChangePassword(generics.GenericAPIView):
-    def post(self, request):
+    def put(self, request):
         cache_data = cache.get(request.session['email'])
 
         if cache_data == 'False' or cache_data is None:
             return JsonResponse({'message' : 'Not Valid'}, status=status.HTTP_401_UNAUTHORIZED)
 
-        password = request.POST['password']
+        password = request.data['password']
 
-        if not password == request.POST['password_check']:
+        if not password == request.data['password_check']:
             return JsonResponse({'message' : 'Fail'}, status=status.HTTP_400_BAD_REQUEST)
 
         user = User.objects.get(email=request.session['email'])
