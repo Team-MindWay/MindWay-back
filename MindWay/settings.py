@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'dj_rest_auth.registration',
 
     'accounts',
+    'applications',
 ]
 
 REST_FRAMEWORK = {
