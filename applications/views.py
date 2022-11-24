@@ -36,3 +36,24 @@ class BookApplication(APIView):
         serializer.save()
 
         return JsonResponse({'message' : 'Success'})
+
+    def put(self, request):
+        auth = request.META.get('HTTP_AUTHORIZATION').split()
+        user = user_valid(auth)
+
+        book = Book.objects.get(pk=request.data['id'])
+
+        if not user == book.user:
+            return JsonResponse({'message' : 'Fail'}, status=status.HTTP_403_FORBIDDEN)
+
+        request.data._mutable = True
+        request.data['user'] = user.id
+
+        serializer = BookSerializer(book, data=request.data)
+
+        if not serializer.is_valid(raise_exception=True):
+            return JsonResponse({'message' : 'Fail'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        serializer.save()
+
+        return JsonResponse({'message' : 'Success'})
