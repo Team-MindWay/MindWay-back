@@ -57,3 +57,16 @@ class BookApplication(APIView):
         serializer.save()
 
         return JsonResponse({'message' : 'Success'})
+    
+    def delete(self, request):
+        auth = request.META.get('HTTP_AUTHORIZATION').split()
+        user = user_valid(auth)
+
+        book = Book.objects.get(pk=request.data['id'])
+
+        if not user == book.user:
+            return JsonResponse({'message' : 'Fail'}, status=status.HTTP_403_FORBIDDEN)
+        
+        book.delete()
+
+        return JsonResponse({'message' : 'Success'})
