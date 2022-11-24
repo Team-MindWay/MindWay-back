@@ -2,6 +2,7 @@ from django.http import JsonResponse
 from django.conf import settings
 from rest_framework import status
 from rest_framework.views import APIView
+from rest_framework.response import Response
 
 from accounts.token import user_valid
 from .serializers import *
@@ -14,6 +15,14 @@ logging.config.dictConfig(settings.DEFAULT_LOGGING)
 
 # Create your views here.
 class BookApplication(APIView):
+    def get(self, request):
+        auth = request.META.get('HTTP_AUTHORIZATION').split()
+        user_valid(auth)
+        queryset = Book.objects.all()
+        serializer = BookSerializer(queryset, many=True)
+
+        return Response(serializer.data)
+
     def post(self, request):
         auth = request.META.get('HTTP_AUTHORIZATION').split()
         user = user_valid(auth)
