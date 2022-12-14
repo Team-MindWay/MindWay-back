@@ -70,3 +70,13 @@ class BookApplication(APIView):
         book.delete()
 
         return JsonResponse({'message' : 'Success'})
+
+class BookInfo(APIView):
+    def get(self, request, id):
+        auth = request.META.get('HTTP_AUTHORIZATION').split()
+        user_valid(auth)
+
+        book = Book.objects.get(pk=id)
+        serializer = BookSerializer(book)
+
+        return Response(serializer.data)
