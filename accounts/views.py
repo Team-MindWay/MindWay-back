@@ -1,6 +1,5 @@
 import jwt
 from rest_framework import generics, status
-from rest_framework.permissions import AllowAny
 from rest_framework.exceptions import AuthenticationFailed
 from django.http import JsonResponse
 from django.core.exceptions import ValidationError
