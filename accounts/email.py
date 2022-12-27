@@ -17,7 +17,7 @@ def send(request, email):
     mail_title = "MindWay 이메일 인증"
     mail_to = email
 
-    html_message = render_to_string('templates/validation.html', context={'url' : url})
+    html_message = render_to_string('templates/signup.html', context={'url' : url})
 
     msg = EmailMultiAlternatives(mail_title, url, settings.EMAIL_HOST_USER, [mail_to])
     msg.attach_alternative(html_message, 'text/html')
