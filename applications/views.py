@@ -16,16 +16,14 @@ logging.config.dictConfig(settings.DEFAULT_LOGGING)
 # Create your views here.
 class BookApplication(APIView):
     def get(self, request):
-        auth = request.META.get('HTTP_AUTHORIZATION').split()
-        user_valid(auth)
+        user_valid(request)
         queryset = Book.objects.all()
         serializer = BookSerializer(queryset, many=True)
 
         return Response(serializer.data)
 
     def post(self, request):
-        auth = request.META.get('HTTP_AUTHORIZATION').split()
-        user = user_valid(auth)
+        user = user_valid(request)
         request.data._mutable = True
         request.data['user'] = user.id
         serializer = BookSerializer(data=request.data)
@@ -38,9 +36,7 @@ class BookApplication(APIView):
         return JsonResponse({'message' : 'Success'})
 
     def put(self, request):
-        auth = request.META.get('HTTP_AUTHORIZATION').split()
-        user = user_valid(auth)
-
+        user = user_valid(request)
         book = Book.objects.get(pk=request.data['id'])
 
         if not user == book.user:
@@ -59,8 +55,7 @@ class BookApplication(APIView):
         return JsonResponse({'message' : 'Success'})
     
     def delete(self, request):
-        auth = request.META.get('HTTP_AUTHORIZATION').split()
-        user = user_valid(auth)
+        user = user_valid(request)
 
         book = Book.objects.get(pk=request.data['id'])
 
@@ -73,10 +68,18 @@ class BookApplication(APIView):
 
 class BookInfo(APIView):
     def get(self, request, id):
-        auth = request.META.get('HTTP_AUTHORIZATION').split()
-        user_valid(auth)
+        user_valid(request)
 
         book = Book.objects.get(pk=id)
         serializer = BookSerializer(book)
+
+        return Response(serializer.data)
+
+class LibraryApplication(APIView):
+    def get(self, request):
+        user_valid(request)
+
+        team = Library.objects.prefetch_related('student').all()
+        serializer = LibrarySerializer(team, many=True)
 
         return Response(serializer.data)
