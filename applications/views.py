@@ -56,7 +56,6 @@ class BookApplication(APIView):
     
     def delete(self, request):
         user = user_valid(request)
-
         book = Book.objects.get(pk=request.data['id'])
 
         if not user == book.user:
@@ -107,5 +106,17 @@ class LibraryApplication(APIView):
                 return JsonResponse({'message' : 'Fail'}, status=status.HTTP_400_BAD_REQUEST)
 
             member_serializer.save()
+
+        return JsonResponse({'message' : 'Success'})
+
+    def delete(self, request):
+        user = user_valid(request)
+        library = Library.objects.get(pk=request.data['id'])
+        member = TeamMember.objects.filter(team=library).values_list('name', flat=True)
+
+        if not user.username in member:
+            return JsonResponse({'message' : f'Not in {library.team} team.'}, status=status.HTTP_403_FORBIDDEN)
+
+        library.delete()
 
         return JsonResponse({'message' : 'Success'})
