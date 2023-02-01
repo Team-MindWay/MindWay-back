@@ -83,3 +83,29 @@ class LibraryApplication(APIView):
         serializer = LibrarySerializer(team, many=True)
 
         return Response(serializer.data)
+
+    def post(self, request):
+        user_valid(request)
+        request.data._mutable = True
+        member_list = request.data.pop('member')
+
+        library_serializer = LibrarySerializer(data=request.data)
+        
+        if not library_serializer.is_valid(raise_exception=True):
+            return JsonResponse({'message' : 'Fail'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        library_serializer.save()
+        
+        team = Library.objects.filter(team=request.data['team']).first()
+
+        for member in member_list:
+            info = member.split(' ')
+            data = {'team' : team.pk, 'number' : info[0], 'name' : info[1]}
+            member_serializer = MemberSerializer(data=data)
+
+            if not member_serializer.is_valid(raise_exception=True):
+                return JsonResponse({'message' : 'Fail'}, status=status.HTTP_400_BAD_REQUEST)
+
+            member_serializer.save()
+
+        return JsonResponse({'message' : 'Success'})

@@ -2,7 +2,7 @@ from django.db import models
 from accounts.models import User
 
 LIBRARY_CATEGORY = (
-    ('온라인 강의실', '온라인 강의싷'),
+    ('온라인 강의실', '온라인 강의실'),
     ('학부모 회의실', '학부모 회의실'),
     ('스터디 카페', '스터디 카페')
 )
