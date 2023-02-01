@@ -39,10 +39,15 @@ def decode_refresh_token(token):
     except:
         raise exceptions.AuthenticationFailed('unauthenticated')
 
-def user_valid(auth):
-    if auth and len(auth) == 2:
-        id = decode_access_token(auth[1])
-        user = User.objects.get(id=id)
+def user_valid(request):
+    try:
+        auth = request.META.get('HTTP_AUTHORIZATION').split()
 
-        return user
-    raise AuthenticationFailed('unauthenticated')
+        if auth and len(auth) == 2:
+            id = decode_access_token(auth[1])
+            user = User.objects.get(id=id)
+
+            return user
+        raise AuthenticationFailed('unauthenticated')
+    except:
+        raise AuthenticationFailed('unauthenticated')
