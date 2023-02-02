@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from accounts.token import user_valid
+from apps.user.accounts.token import user_valid
 from .serializers import *
 from .models import *
 

@@ -10,7 +10,7 @@ JWT_ENCODE_HANDLER = api_settings.JWT_ENCODE_HANDLER
 
 def generate_token(payload, type):
     if type == "access":
-        exp = datetime.datetime.utcnow() + datetime.timedelta(minutes=3)
+        exp = datetime.datetime.utcnow() + datetime.timedelta(hours=3)
     elif type == "refresh":
         exp = datetime.datetime.utcnow() + datetime.timedelta(weeks=2)
     else :

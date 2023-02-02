@@ -1,5 +1,5 @@
 from django.db import models
-from accounts.models import User
+from apps.user.accounts.models import User
 
 LIBRARY_CATEGORY = (
     ('온라인 강의실', '온라인 강의실'),
