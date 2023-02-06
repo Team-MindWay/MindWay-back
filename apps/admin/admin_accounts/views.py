@@ -13,6 +13,7 @@ from django.core.cache import cache
 from .serializer import *
 from .models import *
 from apps.user.accounts.serializers import *
+from apps.user.accounts.token import *
 
 class AdminLogin(APIView):
     def post(self, request):
@@ -50,3 +51,30 @@ class AdminLogin(APIView):
 
             refresh.save()
         return JsonResponse({'access_token' : user['access_token'], 'refresh_token' : user['refresh_token']})
+
+class AdminRefresh(APIView):
+    def patch(self, request):
+        refresh = request.data['refresh_token']
+        user = decode_refresh_token(refresh)
+        pre_token = Refresh.objects.get(user=user['user_id'])
+
+        if not pre_token.refresh == refresh:
+            return JsonResponse({'message' : 'Fail'}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = RefreshSerializer(data={'id' : user['user_id']})
+
+        if not serializer.is_valid(raise_exception=True):
+            return JsonResponse({'message' : 'Fail'}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer.is_valid(raise_exception=True)
+        token = serializer.validated_data
+
+        data = {'user' : user['user_id'], 'refresh' : token['refresh_token']}
+        update_token = TokenSerializer(pre_token, data=data)
+
+        if not update_token.is_valid(raise_exception=True):
+            return JsonResponse({'message' : 'Fail'}, status=status.HTTP_400_BAD_REQUEST)
+
+        update_token.save()
+
+        return JsonResponse({'access_token' : token['access_token'], 'refresh_token' : token['refresh_token']})
