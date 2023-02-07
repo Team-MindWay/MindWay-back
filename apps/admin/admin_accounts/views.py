@@ -10,7 +10,7 @@ from django.shortcuts import redirect
 from django.conf import settings
 from django.core.cache import cache
 
-from .serializer import *
+from .serializers import *
 from .models import *
 from apps.user.accounts.serializers import *
 from apps.user.accounts.token import *
