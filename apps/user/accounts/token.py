@@ -51,3 +51,17 @@ def user_valid(request):
         raise AuthenticationFailed('unauthenticated')
     except:
         raise AuthenticationFailed('unauthenticated')
+
+def admin_valid(request):
+    try:
+        auth = request.META.get('HTTP_AUTHORIZATION').split()
+
+        if auth and len(auth) == 2:
+            id = decode_access_token(auth[1])
+            user = User.objects.get(id=id)
+
+            if user.is_superuser == True:
+                return user
+        raise AuthenticationFailed('unauthenticated')
+    except:
+        raise AuthenticationFailed('unauthenticated')
