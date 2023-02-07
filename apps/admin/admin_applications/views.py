@@ -16,7 +16,7 @@ logging.config.dictConfig(settings.DEFAULT_LOGGING)
 class AdminLibraryApplication(APIView):
     def get(self, request):
         user_valid(request)
-        book = Book.objects.all()
-        serializer = LibrarySerializer(book, many=True)
+        library = Library.objects.all()
+        serializer = LibrarySerializer(library, many=True)
 
         return Response(serializer.data)
