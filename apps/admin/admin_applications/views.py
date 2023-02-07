@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from apps.user.accounts.token import user_valid
+from apps.user.accounts.token import admin_valid
 from .serializers import *
 from .models import *
 
@@ -15,7 +15,7 @@ logging.config.dictConfig(settings.DEFAULT_LOGGING)
 
 class AdminLibraryApplication(APIView):
     def get(self, request):
-        user_valid(request)
+        admin_valid(request)
         library = Library.objects.all()
         serializer = LibrarySerializer(library, many=True)
 
