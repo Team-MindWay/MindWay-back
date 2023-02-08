@@ -20,3 +20,18 @@ class AdminLibraryApplication(APIView):
         serializer = LibrarySerializer(library, many=True)
 
         return Response(serializer.data)
+
+class AdminBookApplication(APIView):
+    def get(self, request):
+        admin_valid(request)
+        book = Book.objects.all()
+        serializer = BookSerializer(book, many=True)
+
+        return Response(serializer.data)
+    
+    def delete(self, request):
+        admin_valid(request)
+        book = Book.objects.get(pk=request.data['id'])
+        book.delete()
+
+        return JsonResponse({'message' : 'Success'})
