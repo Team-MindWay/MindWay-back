@@ -20,3 +20,11 @@ class AdminLibraryApplication(APIView):
         serializer = LibrarySerializer(library, many=True)
 
         return Response(serializer.data)
+
+class AdminBookApplication(APIView):
+    def get(self, request):
+        admin_valid(request)
+        book = Book.objects.all()
+        serializer = BookSerializer(book, many=True)
+
+        return Response(serializer.data)
