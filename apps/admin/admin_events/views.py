@@ -42,3 +42,10 @@ class AdminEventView(APIView):
 
         serializer.save()
         return JsonResponse({'message' : 'Success'})
+
+    def delete(self, request):
+        admin_valid(request)
+        event = Event.objects.get(id=request.data['id'])
+        event.delete()
+
+        return JsonResponse({'message' : 'Success'})
