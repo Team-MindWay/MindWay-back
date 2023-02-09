@@ -1,0 +1,1 @@
+from apps.user.events.models import *
