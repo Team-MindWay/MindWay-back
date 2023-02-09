@@ -31,3 +31,14 @@ class AdminEventView(APIView):
 
         serializer.save()
         return JsonResponse({'message' : 'Success'})
+
+    def put(self, request):
+        admin_valid(request)
+        event = Event.objects.get(id=request.data['id'])
+        serializer = EventSerializer(event, data=request.data)
+
+        if not serializer.is_valid(raise_exception=True):
+            return JsonResponse({'message' : 'Fail'}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer.save()
+        return JsonResponse({'message' : 'Success'})
