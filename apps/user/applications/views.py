@@ -29,7 +29,7 @@ class BookApplication(APIView):
         serializer = BookSerializer(data=request.data)
 
         if not serializer.is_valid(raise_exception=True):
-            return JsonResponse({'message' : 'Fail'}, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({'message' : 'Bad Request.'}, status=status.HTTP_400_BAD_REQUEST)
         
         serializer.save()
 
@@ -40,7 +40,7 @@ class BookApplication(APIView):
         book = Book.objects.get(pk=request.data['id'])
 
         if not user == book.user:
-            return JsonResponse({'message' : 'Fail'}, status=status.HTTP_403_FORBIDDEN)
+            return JsonResponse({'message' : '본인이 신청한 책만 수정할 수 있습니다.'}, status=status.HTTP_403_FORBIDDEN)
 
         request.data._mutable = True
         request.data['user'] = user.id
@@ -48,7 +48,7 @@ class BookApplication(APIView):
         serializer = BookSerializer(book, data=request.data)
 
         if not serializer.is_valid(raise_exception=True):
-            return JsonResponse({'message' : 'Fail'}, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({'message' : 'Bad Request.'}, status=status.HTTP_400_BAD_REQUEST)
         
         serializer.save()
 
@@ -59,7 +59,7 @@ class BookApplication(APIView):
         book = Book.objects.get(pk=request.data['id'])
 
         if not user == book.user:
-            return JsonResponse({'message' : 'Fail'}, status=status.HTTP_403_FORBIDDEN)
+            return JsonResponse({'message' : '본인이 신청한 책만 삭제할 수 있습니다.'}, status=status.HTTP_403_FORBIDDEN)
         
         book.delete()
 
@@ -91,7 +91,7 @@ class LibraryApplication(APIView):
         library_serializer = LibrarySerializer(data=request.data)
         
         if not library_serializer.is_valid(raise_exception=True):
-            return JsonResponse({'message' : 'Fail'}, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({'message' : 'Bad Request.'}, status=status.HTTP_400_BAD_REQUEST)
         
         library_serializer.save()
         
@@ -103,7 +103,7 @@ class LibraryApplication(APIView):
             member_serializer = MemberSerializer(data=data)
 
             if not member_serializer.is_valid(raise_exception=True):
-                return JsonResponse({'message' : 'Fail'}, status=status.HTTP_400_BAD_REQUEST)
+                return JsonResponse({'message' : 'Bad Request'}, status=status.HTTP_400_BAD_REQUEST)
 
             member_serializer.save()
 
@@ -115,7 +115,7 @@ class LibraryApplication(APIView):
         member = TeamMember.objects.filter(team=library).values_list('name', flat=True)
 
         if not user.username in member:
-            return JsonResponse({'message' : f'Not in {library.team} team.'}, status=status.HTTP_403_FORBIDDEN)
+            return JsonResponse({'message' : f'{library.team}의 팀원이 아닙니다.'}, status=status.HTTP_403_FORBIDDEN)
 
         library.delete()
 

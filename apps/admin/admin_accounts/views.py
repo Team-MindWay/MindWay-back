@@ -20,16 +20,16 @@ class AdminLogin(APIView):
         serializer = AdminLoginSerializer(data=request.data)
 
         if not serializer.is_valid(raise_exception=True):
-            return JsonResponse({'message' : 'Fail'}, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({'message' : 'Bad Request.'}, status=status.HTTP_400_BAD_REQUEST)
 
         serializer.is_valid()
         user = serializer.validated_data
 
         if user['id'] is None:
-            return JsonResponse({'message' : 'Fail'}, status=status.HTTP_401_UNAUTHORIZED)
+            return JsonResponse({'message' : '존재하지 않는 사용자입니다.'}, status=status.HTTP_401_UNAUTHORIZED)
 
         if user['is_superuser'] == False:
-            return JsonResponse({'message' : 'Fail'}, status=status.HTTP_403_FORBIDDEN)
+            return JsonResponse({'message' : 'admin 계정이 아닙니다.'}, status=status.HTTP_403_FORBIDDEN)
 
         try :
             token = Refresh.objects.get(id=user['id'])
@@ -39,7 +39,7 @@ class AdminLogin(APIView):
                 refresh = TokenSerializer(token, data=data)
     
                 if not refresh.is_valid(raise_exception=True):
-                    return JsonResponse({'message' : 'Fail'}, status=status.HTTP_400_BAD_REQUEST)
+                    return JsonResponse({'message' : 'Bad Request.'}, status=status.HTTP_400_BAD_REQUEST)
     
                 refresh.save()
         except:
@@ -47,7 +47,7 @@ class AdminLogin(APIView):
             refresh = TokenSerializer(data=data)
 
             if not refresh.is_valid(raise_exception=True):
-                return JsonResponse({'message' : 'Fail'}, status=status.HTTP_400_BAD_REQUEST)
+                return JsonResponse({'message' : 'Bad Request.'}, status=status.HTTP_400_BAD_REQUEST)
 
             refresh.save()
         return JsonResponse({'access_token' : user['access_token'], 'refresh_token' : user['refresh_token']})
@@ -59,12 +59,12 @@ class AdminRefresh(APIView):
         pre_token = Refresh.objects.get(user=user['user_id'])
 
         if not pre_token.refresh == refresh:
-            return JsonResponse({'message' : 'Fail'}, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({'message' : 'Bad Request.'}, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = RefreshSerializer(data={'id' : user['user_id']})
 
         if not serializer.is_valid(raise_exception=True):
-            return JsonResponse({'message' : 'Fail'}, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({'message' : 'Bad Request.'}, status=status.HTTP_400_BAD_REQUEST)
 
         serializer.is_valid(raise_exception=True)
         token = serializer.validated_data
@@ -73,7 +73,7 @@ class AdminRefresh(APIView):
         update_token = TokenSerializer(pre_token, data=data)
 
         if not update_token.is_valid(raise_exception=True):
-            return JsonResponse({'message' : 'Fail'}, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({'message' : 'Bad Request.'}, status=status.HTTP_400_BAD_REQUEST)
 
         update_token.save()
 
