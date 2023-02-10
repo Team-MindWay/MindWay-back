@@ -73,7 +73,7 @@ JWT_AUTH = {
     'JWT_ALGORITHM' : 'HS256',
     'JWT_ALLOW_REFRESH' : True,
     'JWT_EXPIRATION_DELTA' : datetime.timedelta(minutes=30),
-    'JWT_REFRESH_EXPIRATION_DELTA' : datetime.timedelta(days=28)
+    'JWT_REFRESH_EXPIRATION_DELTA' : datetime.timedelta(weeks=4)
 }
 
 AUTH_USER_MODEL = 'accounts.User'
