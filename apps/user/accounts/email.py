@@ -9,7 +9,7 @@ from django.conf import settings
 def url_generator(domain, uid, token):
     return f"http://{domain}/accounts/validation/{uid}/{token}"
 
-def send(request, email):
+def send(request, email, type):
     domain = get_current_site(request).domain
     uid = urlsafe_base64_encode(force_bytes(email))
     token = jwt.encode({'email' : email}, settings.SECRET_KEY, algorithm='HS256').decode('utf-8')
@@ -17,7 +17,10 @@ def send(request, email):
     mail_title = "MindWay 이메일 인증"
     mail_to = email
 
-    html_message = render_to_string('templates/signup.html', context={'url' : url})
+    if type == 'signup':
+        html_message = render_to_string('templates/signup.html', context={'url' : url})
+    elif type == 'password':
+        html_message = render_to_string('templates/change_password.html', context={'url' : url})
 
     msg = EmailMultiAlternatives(mail_title, url, settings.EMAIL_HOST_USER, [mail_to])
     msg.attach_alternative(html_message, 'text/html')
