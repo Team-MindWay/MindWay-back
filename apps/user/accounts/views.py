@@ -30,7 +30,7 @@ class Signup(generics.GenericAPIView):
 
         serializer.save()
 
-        send(request, userdata['email'])
+        send(request, userdata['email'], 'signup')
 
         return JsonResponse({'message' : 'Success'}, status=status.HTTP_200_OK)
 
@@ -49,12 +49,12 @@ class Validation(generics.GenericAPIView):
                 if cache_data == 'False':
                     cache.set(user.email, 'True', 30)
 
-                return JsonResponse({'message' : 'success'})
+                return JsonResponse({'message' : 'success'}) ## redirect front url(change_password page)
 
             user.is_active = True
             user.save()
 
-            return JsonResponse({'message' : 'Success'}, status=status.HTTP_200_OK)
+            return JsonResponse({'message' : 'Success'}, status=status.HTTP_200_OK) ## render template(signup success)
         except ValidationError:
             return JsonResponse({'message' : 'Type Error'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -74,7 +74,7 @@ class RequestValidation(generics.GenericAPIView):
         if user['is_active'] == False:
             return JsonResponse({'message' : '인증되지 않은 사용자입니다. 메일을 확인해주세요.'}, status=status.HTTP_403_FORBIDDEN)
 
-        send(request, user['email'])
+        send(request, user['email'], 'password')
         request.session['email'] = user['email']
 
         if cache.get(user['email']) is None:
