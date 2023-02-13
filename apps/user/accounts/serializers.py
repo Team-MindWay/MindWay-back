@@ -85,8 +85,6 @@ class UserSerializer(serializers.ModelSerializer):
             'email',
             'number',
             'username',
-            'is_active',
-            'is_superuser',
         )
 
 class RefreshSerializer(serializers.Serializer):
