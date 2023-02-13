@@ -20,6 +20,7 @@ class SignupSerializer(serializers.ModelSerializer):
         model = User
         fields = (
             'email',
+            'number',
             'username',
             'password',
         )
