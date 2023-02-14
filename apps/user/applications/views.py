@@ -102,7 +102,7 @@ class LibraryApplication(APIView):
             info = member.split(' ')
             user = User.objects.get(number=info[0], username=info[1])
             data = {'team' : team.pk, 'student' : user.id}
-            member_serializer = MemberUploadSerializer(data=data)
+            member_serializer = MemberSerializer(data=data)
 
             if not member_serializer.is_valid(raise_exception=True):
                 return JsonResponse({'message' : 'Bad Request'}, status=status.HTTP_400_BAD_REQUEST)
