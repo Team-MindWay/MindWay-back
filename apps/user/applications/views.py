@@ -114,9 +114,9 @@ class LibraryApplication(APIView):
     def delete(self, request):
         user = user_valid(request)
         library = Library.objects.get(pk=request.data['id'])
-        member = TeamMember.objects.filter(team=library).values_list('name', flat=True)
+        member = TeamMember.objects.filter(team=library).values_list('student', flat=True)
 
-        if not user.username in member:
+        if not user.id in member:
             return JsonResponse({'message' : f'{library.team}의 팀원이 아닙니다.'}, status=status.HTTP_403_FORBIDDEN)
 
         library.delete()
