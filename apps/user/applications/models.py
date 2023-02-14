@@ -25,8 +25,7 @@ class Library(models.Model):
 
 class TeamMember(models.Model):
     team = models.ForeignKey(Library, on_delete=models.CASCADE, related_name='student')
-    number = models.IntegerField()
-    name = models.CharField(max_length=20)
+    student = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
 
     def __str__(self) -> str:
-        return f'{self.team.team} - {self.number} {self.name}'
+        return f'{self.team.team} - {self.student.number} {self.student.username}'
