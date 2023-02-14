@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from apps.user.accounts.token import user_valid
+from apps.user.accounts.models import User
 from .serializers import *
 from .models import *
 
@@ -99,8 +100,9 @@ class LibraryApplication(APIView):
 
         for member in member_list:
             info = member.split(' ')
-            data = {'team' : team.pk, 'number' : info[0], 'name' : info[1]}
-            member_serializer = MemberSerializer(data=data)
+            user = User.objects.get(number=info[0], username=info[1])
+            data = {'team' : team.pk, 'student' : user.id}
+            member_serializer = MemberUploadSerializer(data=data)
 
             if not member_serializer.is_valid(raise_exception=True):
                 return JsonResponse({'message' : 'Bad Request'}, status=status.HTTP_400_BAD_REQUEST)

@@ -21,3 +21,8 @@ class LibrarySerializer(serializers.ModelSerializer):
     class Meta:
         model = Library
         fields = ('id', 'team', 'room', 'student')
+
+class MemberUploadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TeamMember
+        fields = ('team', 'student')
