@@ -4,6 +4,7 @@ from .backends import authenticate
 from django.contrib.auth.models import update_last_login
 from django.conf import settings
 
+from apps.user.applications.serializers import BookSerializer
 from .models import *
 from .token import generate_token
 
@@ -78,6 +79,8 @@ class TokenSerializer(serializers.ModelSerializer):
         )
 
 class UserSerializer(serializers.ModelSerializer):
+    book_set = BookSerializer(many=True, required=False)
+
     class Meta:
         model = User
         fields = (
@@ -85,6 +88,7 @@ class UserSerializer(serializers.ModelSerializer):
             'email',
             'number',
             'username',
+            'book_set',
         )
 
 class RefreshSerializer(serializers.Serializer):
