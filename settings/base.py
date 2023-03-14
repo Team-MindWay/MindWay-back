@@ -179,10 +179,13 @@ EMAIL_HOST_PASSWORD = get_env_variable('EMAIL_HOST_PASSWORD')
 
 
 # Redis Cache
-CACHE = {
+CACHES = {
     'default' : {
-        'BACKEND' : 'django_redis.cache.Redis.Cache',
-        'LOCATION' : get_env_variable('REDIS_LOCATION')
+        'BACKEND' : 'django_redis.cache.RedisCache',
+        'LOCATION' : get_env_variable('REDIS_LOCATION'),
+        'OPTIONS' : {
+            'CLIENT_CLASS' : 'django_redis.client.DefaultClient'
+        }
     }
 }
 
