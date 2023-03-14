@@ -77,7 +77,7 @@ class RequestValidation(generics.GenericAPIView):
         send(request, user['email'], 'password')
         request.session['email'] = user['email']
 
-        if cache.get(user['email']) is None:
+        if not cache.get(user['email']):
             cache.set(user['email'], 'False', 30)
         
         return JsonResponse({'message' : 'Success'})
