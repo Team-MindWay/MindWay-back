@@ -18,22 +18,15 @@ from django.core.exceptions import ImproperlyConfigured
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# secrets.json get_secrets
-secret_file = os.path.join(BASE_DIR, 'secrets.json')
-
-with open(secret_file) as f:
-    secrets = json.loads(f.read())
-
-def get_secret(setting):
-    try :
-        return secrets[setting]
-
-    except KeyError:
-        error_msg = "Set the {} environment variable".format(setting)
-        raise ImproperlyConfigured(error_msg)
+def get_env_variable(var_name):
+  try:
+    return os.environ[var_name]
+  except KeyError:
+    error_msg = 'Set the {} environment variable'.format(var_name)
+    raise ImproperlyConfigured(error_msg)
 
 # SECRET_KEY
-SECRET_KEY = get_secret("SECRET_KEY")
+SECRET_KEY = get_env_variable('DJANGO_SECRET')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -52,6 +45,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    'corsheaders',
 
     'rest_framework',
     'rest_framework.authtoken',
@@ -79,6 +73,7 @@ JWT_AUTH = {
 AUTH_USER_MODEL = 'accounts.User'
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -86,6 +81,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = "MindWay.urls"
@@ -115,11 +111,11 @@ WSGI_APPLICATION = "MindWay.wsgi.application"
 DATABASES = {
     "default": {
         'ENGINE' : 'django.db.backends.mysql',
-        'NAME' : 'mindway',
-        'USER' : get_secret("DATABASE")['USER'],
-        'PASSWORD' : get_secret("DATABASE")['PASSWORD'],
-        'HOST' : 'localhost',
-        'PORT' : '3306',
+        'NAME' : get_env_variable('DB_NAME'),
+        'USER' : get_env_variable('DB_USER'),
+        'PASSWORD': get_env_variable('DB_PASSWORD'),
+        'HOST': get_env_variable('DB_HOST'),
+        'PORT': get_env_variable('DB_PORT'),
     }
 }
 
@@ -178,26 +174,31 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 EMAIL_PORT = '587'
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = get_secret("SMTP")['EMAIL_HOST_USER']
-EMAIL_HOST_PASSWORD = get_secret("SMTP")['EMAIL_HOST_PASSWORD']
+EMAIL_HOST_USER = get_env_variable('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = get_env_variable('EMAIL_HOST_PASSWORD')
 
 
 # Redis Cache
 CACHE = {
     'default' : {
         'BACKEND' : 'django_redis.cache.Redis.Cache',
-        'LOCATION' : 'redis://127.0.0.1:6379'
+        'LOCATION' : get_env_variable('REDIS_LOCATION')
     }
 }
 
-AWS_ACCESS_KEY_ID = get_secret("S3")['AWS_ACCESS_KEY_ID']
-AWS_SECRET_ACCESS_KEY = get_secret("S3")['AWS_SECRET_ACCESS_KEY']
+# S3
+AWS_ACCESS_KEY_ID = get_env_variable('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = get_env_variable('AWS_SECRET_ACCESS_KEY')
 AWS_REGION = 'ap-northeast-2'
 
-AWS_STORAGE_BUCKET_NAME = get_secret("S3")['AWS_STORAGE_BUCKET_NAME']
+AWS_STORAGE_BUCKET_NAME = get_env_variable('AWS_STORAGE_BUCKET_NAME')
 AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_REGION}.amazonaws.com'
 AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
 }
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'path/to/store/my/files/')
+
+# CORS
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
