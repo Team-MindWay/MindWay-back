@@ -126,7 +126,7 @@ class Login(generics.GenericAPIView):
             return JsonResponse({'message' : '인증되지 않은 사용자입니다. 메일을 확인해주세요.'}, status=status.HTTP_403_FORBIDDEN)
 
         try :
-            token = Refresh.objects.get(id=user['id'])
+            token = Refresh.objects.get(user=user['id'])
 
             if token:
                 refresh = TokenSerializer(
