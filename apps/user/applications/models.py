@@ -10,3 +10,12 @@ class Book(models.Model):
 
     def __str__(self) -> str:
         return f'{self.user.username} - {self.title}'
+
+class Recommend(models.Model):
+    recommender = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=256)
+    author = models.CharField(max_length=128)
+    outline = models.CharField(max_length=50)
+
+    def __str__(self) -> str:
+        return f'{self.recommender.username} - {self.title}'

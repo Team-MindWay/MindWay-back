@@ -74,3 +74,12 @@ class BookInfo(APIView):
         serializer = BookSerializer(book)
 
         return Response(serializer.data)
+    
+class BookRecommend(APIView):
+    def get(self, request):
+        user_valid(request)
+
+        data = Recommend.objects.all()
+        serializer = RecommendSerializer(data, many=True)
+
+        return Response(serializer.data)
