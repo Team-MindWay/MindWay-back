@@ -13,14 +13,6 @@ import logging.config
 
 logging.config.dictConfig(settings.DEFAULT_LOGGING)
 
-class AdminLibraryApplication(APIView):
-    def get(self, request):
-        admin_valid(request)
-        library = Library.objects.all()
-        serializer = LibrarySerializer(library, many=True)
-
-        return Response(serializer.data)
-
 class AdminBookApplication(APIView):
     def get(self, request):
         admin_valid(request)
