@@ -19,7 +19,7 @@ class BookApplication(APIView):
     def get(self, request):
         user_valid(request)
         queryset = Book.objects.all()
-        serializer = BookSerializer(queryset, many=True)
+        serializer = BookInfoSerializer(queryset, many=True)
 
         return Response(serializer.data)
 
@@ -71,7 +71,7 @@ class BookInfo(APIView):
         user_valid(request)
 
         book = Book.objects.get(pk=id)
-        serializer = BookSerializer(book)
+        serializer = BookInfoSerializer(book)
 
         return Response(serializer.data)
     

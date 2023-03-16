@@ -16,7 +16,7 @@ class BookInfoSerializer(serializers.ModelSerializer):
 
     def get_user(self, obj):
         return {'id' : obj.user.id, 'number' : obj.user.number, 'username' : obj.user.username}
-    
+
 class RecommendSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recommend
