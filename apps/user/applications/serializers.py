@@ -18,6 +18,11 @@ class BookInfoSerializer(serializers.ModelSerializer):
         return {'id' : obj.user.id, 'number' : obj.user.number, 'username' : obj.user.username}
 
 class RecommendSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Recommend
+        fields = ('id', 'recommender', 'title', 'author', 'outline')
+
+class RecommendInfoSerializer(serializers.ModelSerializer):
     recommender = serializers.SerializerMethodField()
 
     class Meta:
