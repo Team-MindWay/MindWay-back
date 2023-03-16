@@ -8,6 +8,11 @@ class BookSerializer(serializers.ModelSerializer):
         fields = ('id', 'user', 'title', 'author', 'url')
 
 class RecommendSerializer(serializers.ModelSerializer):
+    recommender = serializers.SerializerMethodField()
+
     class Meta:
         model = Recommend
         fields = ('id', 'recommender', 'title', 'author', 'outline')
+
+    def get_recommender(self, obj):
+        return {'id' : obj.recommender.id, 'number' : obj.recommender.number, 'username' : obj.recommender.username}
