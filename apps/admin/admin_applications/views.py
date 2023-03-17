@@ -27,3 +27,54 @@ class AdminBookApplication(APIView):
         book.delete()
 
         return JsonResponse({'message' : 'Success'})
+    
+class AdminBookRecommend(APIView):
+    def get(self, request):
+        admin_valid(request)
+        data = Recommend.objects.all()
+        serializer = RecommendInfoSerializer(data, many=True)
+
+        return Response(serializer.data)
+
+    def post(self, request):
+        user = admin_valid(request)
+        request.data._mutable = True
+        request.data['recommender'] = user.id
+        serializer = RecommendSerializer(data=request.data)
+
+        if not serializer.is_valid(raise_exception=True):
+            return JsonResponse({'message' : 'Bad Request.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        serializer.save()
+
+        return JsonResponse({'message' : 'Success'})
+    
+    def put(self, request):
+        user = admin_valid(request)
+        recommend = Recommend.objects.get(pk=request.data['id'])
+
+        if not user == recommend.recommender:
+            return JsonResponse({'message' : '본인이 신청한 도서만 수정할 수 있습니다.'}, status=status.HTTP_403_FORBIDDEN)
+        
+        request.data._mutable = True
+        request.data['recommender'] = user.id
+
+        serializer = RecommendSerializer(recommend, data=request.data)
+
+        if not serializer.is_valid(raise_exception=True):
+            return JsonResponse({'message' : 'Bad Request.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        serializer.save()
+
+        return JsonResponse({'message' : 'Success'})
+
+    def delete(self, request):
+        user = admin_valid(request)
+        recommend = Recommend.objects.get(id=request.data['id'])
+
+        if not user == recommend.recommender:
+            return JsonResponse({'message' : '본인이 신청한 도서만 삭제할 수 있습니다.'})
+        
+        recommend.delete()
+
+        return JsonResponse({'message' : 'Success'})

@@ -80,6 +80,6 @@ class BookRecommend(APIView):
         user_valid(request)
 
         data = Recommend.objects.all()
-        serializer = RecommendSerializer(data, many=True)
+        serializer = RecommendInfoSerializer(data, many=True)
 
         return Response(serializer.data)
