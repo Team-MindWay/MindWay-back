@@ -20,7 +20,7 @@ class BookInfoSerializer(serializers.ModelSerializer):
 class RecommendSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recommend
-        fields = ('id', 'recommender', 'title', 'author', 'outline')
+        fields = ('id', 'recommender', 'title', 'author', 'outline', 'category')
 
 class RecommendInfoSerializer(serializers.ModelSerializer):
     recommender = serializers.SerializerMethodField()
