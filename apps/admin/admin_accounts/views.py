@@ -32,7 +32,7 @@ class AdminLogin(APIView):
             return JsonResponse({'message' : 'admin 계정이 아닙니다.'}, status=status.HTTP_403_FORBIDDEN)
 
         try :
-            token = Refresh.objects.get(id=user['id'])
+            token = Refresh.objects.get(user=user['id'])
 
             if token:
                 data = {'user' : user['id'], 'refresh' : user['refresh_token']}
