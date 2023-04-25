@@ -1,5 +1,7 @@
 import jwt
+import bcrypt
 from rest_framework import generics, status
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.http import JsonResponse
 from django.core.exceptions import ValidationError
@@ -19,9 +21,18 @@ import logging.config
 logging.config.dictConfig(settings.DEFAULT_LOGGING)
 
 # Create your views here.
-class Signup(generics.GenericAPIView):
+class Signup(APIView):
     def post(self, request):
         userdata = request.data
+        userdata._mutable = True
+        
+        if not userdata['password'] == userdata['password_check']:
+            return JsonResponse({'message' : '비밀번호 확인에 실패하였습니다.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        password = userdata['password'].encode('utf-8')
+        hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
+        logging.info(hashed_password)
+        userdata['password'] = hashed_password
 
         serializer = SignupSerializer(data=userdata)
 
