@@ -24,18 +24,22 @@ logging.config.dictConfig(settings.DEFAULT_LOGGING)
 # Create your views here.
 class Signup(APIView):
     def post(self, request):
-        userdata = request.data
-        userdata._mutable = True
+        userdata = request.data.copy()
         
         if not userdata['password'] == userdata['password_check']:
             return JsonResponse({'message' : '비밀번호 확인에 실패하였습니다.'}, status=status.HTTP_400_BAD_REQUEST)
         
         password = userdata['password'].encode('utf-8')
         hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
-        logging.info(hashed_password)
-        userdata['password'] = hashed_password
 
-        serializer = SignupSerializer(data=userdata)
+        data = {
+            'email' : userdata['email'],
+            'number' : userdata['number'],
+            'username' : userdata['username'],
+            'password' : hashed_password.decode('utf-8')
+        }
+
+        serializer = SignupSerializer(data=data)
 
         if not serializer.is_valid(raise_exception=True):
             return JsonResponse({'message' : 'Bad Request.'}, status=status.HTTP_400_BAD_REQUEST)
