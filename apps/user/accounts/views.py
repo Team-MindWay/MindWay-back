@@ -118,7 +118,9 @@ class ChangePassword(generics.GenericAPIView):
             return JsonResponse({'message' : 'Bad Request.'}, status=status.HTTP_400_BAD_REQUEST)
 
         user = User.objects.get(email=request.session['email'])
-        serializer = ChangePasswordSerializer(user, data={'password' : password})
+        encoded_password = password.encode('utf-8')
+        hashed_password = bcrypt.hashpw(encoded_password, bcrypt.gensalt())
+        serializer = ChangePasswordSerializer(user, data={'password' : hashed_password.decode('utf-8')})
 
         if not serializer.is_valid(raise_exception=True):
             return JsonResponse({'message' : 'Bad Request.'}, status=status.HTTP_400_BAD_REQUEST)
