@@ -9,6 +9,7 @@ from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_text
 from django.conf import settings
 from django.core.cache import cache
+from django.shortcuts import redirect
 
 from .serializers import *
 from .models import *
@@ -60,12 +61,12 @@ class Validation(generics.GenericAPIView):
                 if cache_data == 'False':
                     cache.set(user.email, 'True', 30)
 
-                return JsonResponse({'message' : 'success'}) ## redirect front url(change_password page)
+                return redirect('http://localhost:3000/password/find/success') ## redirect front url(change_password page)
 
             user.is_active = True
             user.save()
 
-            return JsonResponse({'message' : 'Success'}, status=status.HTTP_200_OK) ## render template(signup success)
+            return redirect('http://localhost:3000/signup/success')
         except ValidationError:
             return JsonResponse({'message' : 'Type Error'}, status=status.HTTP_400_BAD_REQUEST)
 
