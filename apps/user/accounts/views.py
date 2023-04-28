@@ -71,16 +71,14 @@ class Validation(generics.GenericAPIView):
                     user.save()
                     cache.delete(user.email)
 
-                    # return redirect('http://localhost:3000/signup/success')
-                    return JsonResponse({'message' : 'success'})
+                    return redirect('http://localhost:3000/signup/success')
                 else :
                     return JsonResponse({'message' : '이미 실행되었거나 잘못된 인증 요청입니다.'}, status=status.HTTP_403_FORBIDDEN)
             elif token_data['type'] == 'password':
                 if token == cache_data:
                     cache.set(user.email, 'True', 30)
 
-                    # return redirect('http://localhost:3000/password/update/success')
-                    return JsonResponse({'message' : 'Success'})
+                    return redirect('http://localhost:3000/password/update/success')
                 else :
                     return JsonResponse({'message' : '이미 실행되었거나 잘못된 인증 요청입니다.'}, status=status.HTTP_403_FORBIDDEN)
         except ValidationError:
