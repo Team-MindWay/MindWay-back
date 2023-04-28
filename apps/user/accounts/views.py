@@ -61,7 +61,7 @@ class Validation(generics.GenericAPIView):
                 if cache_data == 'False':
                     cache.set(user.email, 'True', 30)
 
-                return redirect('http://localhost:3000/password/find/success') ## redirect front url(change_password page)
+                return redirect('http://localhost:3000/password/update/success') ## redirect front url(change_password page)
 
             user.is_active = True
             user.save()
