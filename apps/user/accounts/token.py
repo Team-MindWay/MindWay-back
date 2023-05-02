@@ -39,6 +39,15 @@ def decode_refresh_token(token):
     except:
         raise exceptions.AuthenticationFailed('unauthenticated')
 
+def get_exp(token):
+    try:
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms='HS256')
+        exp = datetime.datetime.fromtimestamp(payload['exp'])
+
+        return exp
+    except:
+        raise exceptions.AuthenticationFailed('unauthenticated')
+
 def user_valid(request):
     try:
         auth = request.META.get('HTTP_AUTHORIZATION').split()
