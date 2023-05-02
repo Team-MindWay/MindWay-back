@@ -50,7 +50,8 @@ class AdminLogin(APIView):
                 return JsonResponse({'message' : 'Bad Request.'}, status=status.HTTP_400_BAD_REQUEST)
 
             refresh.save()
-        return JsonResponse({'access_token' : user['access_token'], 'refresh_token' : user['refresh_token']})
+        exp = get_exp(user['access_token'])
+        return JsonResponse({'access_token' : user['access_token'], 'refresh_token' : user['refresh_token'], 'expire' : exp})
 
 class AdminRefresh(APIView):
     def patch(self, request):
@@ -76,5 +77,5 @@ class AdminRefresh(APIView):
             return JsonResponse({'message' : 'Bad Request.'}, status=status.HTTP_400_BAD_REQUEST)
 
         update_token.save()
-
-        return JsonResponse({'access_token' : token['access_token'], 'refresh_token' : token['refresh_token']})
+        exp = get_exp(token['access_token'])
+        return JsonResponse({'access_token' : token['access_token'], 'refresh_token' : token['refresh_token'], 'expire' : exp})
