@@ -1,4 +1,6 @@
+import bcrypt
 from rest_framework import serializers
+from rest_framework import exceptions
 from rest_framework_jwt.settings import api_settings
 from .backends import authenticate
 from django.contrib.auth.models import update_last_login
@@ -53,20 +55,21 @@ class LoginSerializer(serializers.Serializer):
     def validate(self, data):
         email = data.get('email')
         password = data.get('password', None)
-        user = authenticate(email=email, password=password)
-
-        if user is None:
-            return {'id' : None, 'email' : email}
 
         try :
+            user = User.objects.get(email=email)
+            user_password = user.password.encode('utf-8')
+            input_password = password.encode('utf-8')
+
+            if bcrypt.checkpw(input_password, user_password) == False:
+                raise exceptions.AuthenticationFailed('비밀번호가 틀렸습니다.')
+
             payload = JWT_PAYLOAD_HANDLER(user)
             access_token = generate_token(payload, 'access')
             refresh_token = generate_token(payload, 'refresh')
             update_last_login(None, user)
         except User.DoesNotExist:
-            raise serializers.ValidationError(
-                'User with given email and password does not exist'
-            )
+            raise serializers.ValidationError('가입되지 않은 사용자 입니다.')
 
         return {'id' : user.id, 'email' : email, 'is_active' : user.is_active, 'is_superuser': user.is_superuser, 'access_token' : access_token, 'refresh_token' : refresh_token}
 
