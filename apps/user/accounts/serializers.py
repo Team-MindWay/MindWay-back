@@ -72,7 +72,7 @@ class LoginSerializer(serializers.Serializer):
         except User.DoesNotExist:
             return {'id' : None, 'password' : password}
 
-        return {'id' : user.id, 'email' : email, 'is_active' : user.is_active, 'is_superuser': user.is_superuser, 'access_token' : access_token, 'refresh_token' : refresh_token}
+        return {'id' : user.id, 'email' : email, 'password' : True, 'is_active' : user.is_active, 'is_superuser': user.is_superuser, 'access_token' : access_token, 'refresh_token' : refresh_token}
 
 class TokenSerializer(serializers.ModelSerializer):
     class Meta:
