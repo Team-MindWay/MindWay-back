@@ -5,6 +5,7 @@ from rest_framework_jwt.settings import api_settings
 from .backends import authenticate
 from django.contrib.auth.models import update_last_login
 from django.conf import settings
+from django.http import JsonResponse
 
 from apps.user.applications.serializers import BookSerializer
 from .models import *
@@ -62,14 +63,14 @@ class LoginSerializer(serializers.Serializer):
             input_password = password.encode('utf-8')
 
             if bcrypt.checkpw(input_password, user_password) == False:
-                raise exceptions.AuthenticationFailed('비밀번호가 틀렸습니다.')
+                return {'id' : user.id, 'password' : False}
 
             payload = JWT_PAYLOAD_HANDLER(user)
             access_token = generate_token(payload, 'access')
             refresh_token = generate_token(payload, 'refresh')
             update_last_login(None, user)
         except User.DoesNotExist:
-            raise serializers.ValidationError('가입되지 않은 사용자 입니다.')
+            return {'id' : None, 'password' : password}
 
         return {'id' : user.id, 'email' : email, 'is_active' : user.is_active, 'is_superuser': user.is_superuser, 'access_token' : access_token, 'refresh_token' : refresh_token}
 
