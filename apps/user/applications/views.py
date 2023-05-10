@@ -25,9 +25,14 @@ class BookApplication(APIView):
 
     def post(self, request):
         user = user_valid(request)
-        request.data._mutable = True
-        request.data['user'] = user.id
-        serializer = BookSerializer(data=request.data)
+        request_data = request.data
+        data = {
+            'user' : user['id'],
+            'title' : request_data['title'],
+            'author' : request_data['author'],
+            'url' : request_data['url']
+        }
+        serializer = BookSerializer(data=data)
 
         if not serializer.is_valid(raise_exception=True):
             return JsonResponse({'message' : 'Bad Request.'}, status=status.HTTP_400_BAD_REQUEST)
@@ -39,14 +44,19 @@ class BookApplication(APIView):
     def put(self, request):
         user = user_valid(request)
         book = Book.objects.get(pk=request.data['id'])
+        request_data = request.data
 
         if not user == book.user:
             return JsonResponse({'message' : '본인이 신청한 책만 수정할 수 있습니다.'}, status=status.HTTP_403_FORBIDDEN)
 
-        request.data._mutable = True
-        request.data['user'] = user.id
+        data = {
+            'user' : user['id'],
+            'title' : request_data['title'],
+            'author' : request_data['author'],
+            'url' : request_data['url']
+        }
 
-        serializer = BookSerializer(book, data=request.data)
+        serializer = BookSerializer(book, data=data)
 
         if not serializer.is_valid(raise_exception=True):
             return JsonResponse({'message' : 'Bad Request.'}, status=status.HTTP_400_BAD_REQUEST)
