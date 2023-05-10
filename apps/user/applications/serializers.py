@@ -27,7 +27,7 @@ class RecommendInfoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recommend
-        fields = ('id', 'recommender', 'title', 'author', 'outline')
+        fields = ('id', 'recommender', 'title', 'author', 'outline', 'category')
 
     def get_recommender(self, obj):
         return {'id' : obj.recommender.id, 'number' : obj.recommender.number, 'username' : obj.recommender.username}
