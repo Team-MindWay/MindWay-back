@@ -101,13 +101,13 @@ class RequestValidation(generics.GenericAPIView):
             return JsonResponse({'message' : '인증되지 않은 사용자입니다. 메일을 확인해주세요.'}, status=status.HTTP_403_FORBIDDEN)
 
         send(request, user['email'], 'password')
-        request.session['email'] = user['email']
         
         return JsonResponse({'message' : 'Success'})
 
 class ChangePassword(generics.GenericAPIView):
     def put(self, request):
-        cache_data = cache.get(request.session['email'])
+        email = request.data['email']
+        cache_data = cache.get(email)
 
         if cache_data != 'True' or cache_data is None:
             return JsonResponse({'message' : '인증되지 않은 사용자입니다. 메일을 확인해주세요.'}, status=status.HTTP_401_UNAUTHORIZED)
@@ -117,7 +117,7 @@ class ChangePassword(generics.GenericAPIView):
         if not password == request.data['password_check']:
             return JsonResponse({'message' : 'Bad Request.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        user = User.objects.get(email=request.session['email'])
+        user = User.objects.get(email=email)
         encoded_password = password.encode('utf-8')
         hashed_password = bcrypt.hashpw(encoded_password, bcrypt.gensalt())
         serializer = ChangePasswordSerializer(user, data={'password' : hashed_password.decode('utf-8')})
@@ -127,8 +127,7 @@ class ChangePassword(generics.GenericAPIView):
 
         serializer.save()
 
-        cache.delete(request.session['email'])
-        del request.session['email']
+        cache.delete(email)
 
         return JsonResponse({'message' : 'Success'})
 
