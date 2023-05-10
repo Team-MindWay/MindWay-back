@@ -3,7 +3,7 @@ from apps.user.accounts.models import User
 
 CATEGORY = (
     ('novel', 'novel'),
-    ('essey', 'essay'),
+    ('essay', 'essay'),
 )
 
 # Create your models here.
