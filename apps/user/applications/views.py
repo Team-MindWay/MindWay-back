@@ -27,7 +27,7 @@ class BookApplication(APIView):
         user = user_valid(request)
         request_data = request.data
         data = {
-            'user' : user['id'],
+            'user' : user.id,
             'title' : request_data['title'],
             'author' : request_data['author'],
             'url' : request_data['url']
@@ -50,7 +50,7 @@ class BookApplication(APIView):
             return JsonResponse({'message' : '본인이 신청한 책만 수정할 수 있습니다.'}, status=status.HTTP_403_FORBIDDEN)
 
         data = {
-            'user' : user['id'],
+            'user' : user.id,
             'title' : request_data['title'],
             'author' : request_data['author'],
             'url' : request_data['url']

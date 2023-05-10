@@ -42,7 +42,7 @@ class AdminBookRecommend(APIView):
         data = {
             'title' : request_data['title'],
             'author' : request_data['author'],
-            'recommender' : user['id'],
+            'recommender' : user.id,
             'outline' : request_data['outline'],
             'category' : request_data['category']
         }
@@ -66,7 +66,7 @@ class AdminBookRecommend(APIView):
         data = {
             'title' : request_data['title'],
             'author' : request_data['author'],
-            'recommender' : user['id'],
+            'recommender' : user.id,
             'outline' : request_data['outline'],
             'category' : request_data['category']
         }
