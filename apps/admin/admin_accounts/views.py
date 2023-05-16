@@ -26,7 +26,7 @@ class AdminLogin(APIView):
         user = serializer.validated_data
 
         if user['id'] is None:
-            return JsonResponse({'message' : '존재하지 않는 사용자입니다.'}, status=status.HTTP_401_UNAUTHORIZED)
+            return JsonResponse({'message' : '존재하지 않는 사용자입니다.'}, status=status.HTTP_402_PAYMENT_REQUIRED)
 
         if user['is_superuser'] == False:
             return JsonResponse({'message' : 'admin 계정이 아닙니다.'}, status=status.HTTP_403_FORBIDDEN)

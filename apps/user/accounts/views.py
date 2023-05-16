@@ -110,7 +110,7 @@ class ChangePassword(generics.GenericAPIView):
         cache_data = cache.get(email)
 
         if cache_data != 'True' or cache_data is None:
-            return JsonResponse({'message' : '인증되지 않은 사용자입니다. 메일을 확인해주세요.'}, status=status.HTTP_401_UNAUTHORIZED)
+            return JsonResponse({'message' : '인증되지 않은 사용자입니다. 메일을 확인해주세요.'}, status=status.HTTP_403_FORBIDDEN)
 
         password = request.data['password']
 
@@ -144,10 +144,10 @@ class Login(generics.GenericAPIView):
         user = serializer.validated_data
         
         if user['id'] is None:
-            return JsonResponse({'message' : '가입되지 않은 사용자입니다.'}, status=status.HTTP_401_UNAUTHORIZED)
+            return JsonResponse({'message' : '가입되지 않은 사용자입니다.'}, status=status.HTTP_403_FORBIDDEN)
         
         if user['password'] == False:
-            return JsonResponse({'message' : '잘못된 비밀번호입니다.'}, status=status.HTTP_401_UNAUTHORIZED)
+            return JsonResponse({'message' : '잘못된 비밀번호입니다.'}, status=status.HTTP_403_FORBIDDEN)
 
         if user['is_active'] == False:
             return JsonResponse({'message' : '인증되지 않은 사용자입니다. 메일을 확인해주세요.'}, status=status.HTTP_403_FORBIDDEN)
