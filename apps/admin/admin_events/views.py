@@ -17,8 +17,12 @@ logging.config.dictConfig(settings.DEFAULT_LOGGING)
 class AdminEventView(APIView):
     def get(self, request):
         admin_valid(request)
-        event = Event.objects.all()
-        serializer = EventSerializer(event, many=True)
+        event = Event.objects.first()
+
+        if event is None:
+            return JsonResponse({'message' : '현재 진행중인 이벤트가 없습니다.'}, status=status.HTTP_204_NO_CONTENT)
+
+        serializer = EventSerializer(event)
 
         return Response(serializer.data)
 
