@@ -95,7 +95,7 @@ class RequestValidation(generics.GenericAPIView):
         user = serializer.validated_data
 
         if user['email'] == None:
-            return JsonResponse({'message' : '가입되지 않은 이메일입니다.'}, status=status.HTTP_401_UNAUTHORIZED)
+            return JsonResponse({'message' : '가입되지 않은 이메일입니다.'}, status=status.HTTP_403_FORBIDDEN)
 
         if user['is_active'] == False:
             return JsonResponse({'message' : '인증되지 않은 사용자입니다. 메일을 확인해주세요.'}, status=status.HTTP_403_FORBIDDEN)
