@@ -5,8 +5,6 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.http import JsonResponse
 from django.core.exceptions import ValidationError
-from django.utils.http import urlsafe_base64_decode
-from django.utils.encoding import force_text
 from django.conf import settings
 from django.core.cache import cache
 from django.shortcuts import redirect
@@ -53,34 +51,41 @@ class Signup(APIView):
 class Validation(generics.GenericAPIView):
     def get(self, request, uid, token):
         try :
-            decode_uid = force_text(urlsafe_base64_decode(uid))
-            user = User.objects.get(email=decode_uid)
             token_data = jwt.decode(token, settings.SECRET_KEY, algorithms='HS256')
-
+            user = User.objects.get(email=token_data['email'])
+            
             if not user.email == token_data['email']:
                 return JsonResponse({'message' : 'Bad Request.'}, status=status.HTTP_400_BAD_REQUEST)
 
             cache_data = cache.get(user.email)
-            
-            if not cache_data:
-                return JsonResponse({'message' : '인증요청 정보가 없습니다.'}, status=status.HTTP_400_BAD_REQUEST)
-            
+
             if token_data['type'] == 'signup':
-                if token == cache_data:
+                if cache_data is None:
+                    if user.is_active == False:
+                        user.delete()
+                        
+                        return redirect('http://localhost:3000/signup/expire')
+                    elif user.is_active == True:
+                        return redirect('http://localhost:3000/email/error')
+                    
+                if uid == str(cache_data):
                     user.is_active = True
                     user.save()
                     cache.delete(user.email)
 
                     return redirect('http://localhost:3000/signup/success')
                 else :
-                    return JsonResponse({'message' : '이미 실행되었거나 잘못된 인증 요청입니다.'}, status=status.HTTP_403_FORBIDDEN)
+                    return redirect('http://localhost:3000/email/error')
             elif token_data['type'] == 'password':
-                if token == cache_data:
+                if cache_data is None:
+                    return redirect('http://localhost:3000/password/update/expire')
+
+                if uid == str(cache_data):
                     cache.set(user.email, 'True', 30)
 
                     return redirect('http://localhost:3000/password/update/success')
                 else :
-                    return JsonResponse({'message' : '이미 실행되었거나 잘못된 인증 요청입니다.'}, status=status.HTTP_403_FORBIDDEN)
+                    return redirect('http://localhost:3000/email/error')
         except ValidationError:
             return JsonResponse({'message' : 'Type Error'}, status=status.HTTP_400_BAD_REQUEST)
 
