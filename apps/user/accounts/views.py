@@ -88,6 +88,8 @@ class Validation(generics.GenericAPIView):
                     return redirect('http://localhost:3000/email/error')
         except ValidationError:
             return JsonResponse({'message' : 'Type Error'}, status=status.HTTP_400_BAD_REQUEST)
+        except User.DoesNotExist:
+            return redirect('http://localhost:3000/email/error')
 
 class RequestValidation(generics.GenericAPIView):
     def post(self, request):

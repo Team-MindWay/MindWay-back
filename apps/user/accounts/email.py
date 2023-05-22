@@ -2,8 +2,6 @@ import jwt, uuid
 from django.core.mail import EmailMultiAlternatives
 from django.core.cache import cache
 from django.contrib.sites.shortcuts import get_current_site
-from django.utils.http import urlsafe_base64_encode
-from django.utils.encoding import force_bytes
 from django.template.loader import render_to_string
 from django.conf import settings
 
