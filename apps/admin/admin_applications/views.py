@@ -90,3 +90,12 @@ class AdminBookRecommend(APIView):
         recommend.delete()
 
         return JsonResponse({'message' : 'Success'})
+    
+class AdminBookRecommendInfo(APIView):
+    def get(self, request, id):
+        admin_valid(request)
+        recommend = Recommend.objects.get(id=id)
+
+        recommend_serializer = RecommendInfoSerializer(recommend)
+        
+        return Response(recommend_serializer.data)
