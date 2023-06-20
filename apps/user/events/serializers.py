@@ -3,6 +3,7 @@ from .models import *
 
 class EventSerializer(serializers.ModelSerializer):
     title = serializers.CharField()
+    image = serializers.ImageField(use_url=True)
 
     class Meta:
         model = Event
