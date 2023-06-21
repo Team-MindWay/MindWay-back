@@ -1,3 +1,4 @@
+import boto3
 from django.conf import settings
 from rest_framework import status
 from rest_framework.views import APIView
@@ -21,7 +22,7 @@ class AdminEventView(APIView):
         if event is None:
             return Response({'message' : '현재 진행중인 이벤트가 없습니다.'}, status=status.HTTP_204_NO_CONTENT)
 
-        serializer = EventGetSerializer(event)
+        serializer = EventSerializer(event)
 
         return Response(serializer.data)
 
@@ -54,15 +55,28 @@ class AdminEventView(APIView):
 
         return Response({'message' : 'Success'})
     
-class ImageView(APIView):
+def upload_file_to_s3(file):
+    s3_client = boto3.client(
+        's3',
+        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY
+    )
+
+    try:
+        s3_client.upload_fileobj(file, settings.AWS_STORAGE_BUCKET_NAME, file.name)
+        return True
+    except Exception as e:
+        logging.info(e)
+        return False
+
+class ImageS3UploadView(APIView):
     def post(self, request):
         admin_valid(request)
-        
-        data = {'event' : request.data['id'], 'image' : request.FILES.get('image')}
-        serializer = EventImageSerializer(data=data)
 
-        if not serializer.is_valid(raise_exception=True):
-            return Response({'message' : 'Bad Request.'}, status=status.HTTP_400_BAD_REQUEST)
+        image = request.FILES.get('image')
+        upload_status = upload_file_to_s3(image)
+
+        if not upload_status:
+            return Response({'message' : 'S3 Upload Fail'}, status=status.HTTP_400_BAD_REQUEST)
         
-        serializer.save()
-        return Response({'message' : 'Success'})
+        return Response({'ImageUrl' : f'https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/{image.name}'})
