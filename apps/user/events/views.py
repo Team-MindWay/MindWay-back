@@ -22,6 +22,6 @@ class EventInfo(APIView):
         if event is None:
             return JsonResponse({'message' : '현재 진행중인 이벤트가 없습니다.'}, status=status.HTTP_204_NO_CONTENT)
 
-        serializer = EventGetSerializer(event)
+        serializer = EventSerializer(event)
 
         return Response(serializer.data)
