@@ -20,7 +20,7 @@ class Recommend(models.Model):
     recommender = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=256)
     author = models.CharField(max_length=128)
-    outline = models.CharField(max_length=50)
+    outline = models.CharField(max_length=128)
     category = models.CharField(max_length=30, choices=CATEGORY, default=None, null=True)
 
     def __str__(self) -> str:
